@@ -1,0 +1,54 @@
+#include <iostream>
+#include <fstream>
+#include <set>
+#include <string>
+#include <algorithm>
+
+void toLowerCase(std::string &word) {
+    std::transform(word.begin(), word.end(), word.begin(), ::tolower);
+}
+
+void loadDictionary(std::set<std::string> &dictionary, const std::string &filename) {
+    std::ifstream file(filename);
+    if (!file) {
+        std::cerr << "Error: Could not open dictionary file.\n";
+        exit(1);
+    }
+
+    std::string word;
+    while (file >> word) {
+        toLowerCase(word);
+        dictionary.insert(word);
+    }
+    file.close();
+}
+
+void checkSpelling(const std::set<std::string> &dictionary) {
+    std::string input;
+    std::cout << "Enter words to check spelling (type 'exit' to quit):\n";
+    while (true) {
+        std::cin >> input;
+        toLowerCase(input);
+
+        if (input == "exit") break;
+
+        if (dictionary.find(input) != dictionary.end()) {
+            std::cout << input << " is spelled correctly.\n";
+        } else {
+            std::cout << input << " is not found in the dictionary.\n";
+        }
+    }
+}
+
+int main() {
+    std::set<std::string> dictionary;
+    std::string dictionaryFile = "dictionary.txt";
+
+    std::cout << "Loading dictionary...\n";
+    loadDictionary(dictionary, dictionaryFile);
+    std::cout << "Dictionary loaded successfully.\n";
+
+    checkSpelling(dictionary);
+
+    return 0;
+}
